@@ -20,10 +20,6 @@ train_real_data_dir = r'.\Training\Real\*'
 train_white_data_dir = r'.\Training\White\*'
 
 
-
-# print(real_list)
-# input()
-
 real_list = glob.glob(train_real_data_dir)
 train_real_data_list = []
 train_real_data_list.extend(real_list)
@@ -32,15 +28,6 @@ white_list = glob.glob(train_white_data_dir)
 train_white_data_list = []
 train_white_data_list.extend(white_list)
 
-# print(train_real_data_list)
-# input()
-# A = imread(train_real_data_list[0] , mode='L')
-# B = cv2.imread(train_real_data_list[0], cv2.IMREAD_GRAYSCALE)
-# cv2.imshow('A', A)
-# cv2.imshow('B', B)
-# if A.all() == B.all():
-#     print('same')
-# cv2.waitKey(0)
 
 df = 64 # num of d's filters
 gf = 64 # num of g's filters
@@ -75,7 +62,6 @@ def dis(input_shape):
     # model.summary()
     return model
     
-
     
 def gen(input_shape):
     
@@ -106,9 +92,7 @@ def gen(input_shape):
     d4 = conv_block(d3, 8*gf) 
     d5 = conv_block(d4, 8*gf) 
     d6 = conv_block(d5, 8*gf) 
-    d7 = conv_block(d6, 8*gf) 
-
-
+    d7 = conv_block(d6, 8*gf)
 
     u1 = deconv_block(d7, d6, gf*8)
     u2 = deconv_block(u1, d5, gf*8)
@@ -145,8 +129,7 @@ fake_A = G(img_B)
 D.trainable=False                   
 valid = D([fake_A,img_B])           
 AM = Model([img_A,img_B],[valid,fake_A])  
-# print(valid)
-# input()
+
                           
 AM.compile(loss=['mse', 'mae'],loss_weights=[1,50],optimizer=AM_optimizer)
 # AM.summary()
@@ -168,7 +151,6 @@ def generator_training_Img(real_list_dir,white_list_dir,resize=None,batch_size=3
     batch_white_img = np.array(batch_white_img)/127.5-1
     batch_white_img = np.expand_dims(batch_white_img,axis=1)
     return batch_real_img,batch_white_img
-
 
 
 
@@ -228,26 +210,20 @@ def generator_test_Img(white_list_dir,resize=None ):
     return batch_white_img
 
 
-
 test_white_data_dir = r'testimg/*'
 test_white_list = glob.glob(test_white_data_dir)
 test_white_data_list = []
 test_white_data_list.extend(test_white_list)
 test_white_data_list = sorted(test_white_data_list)
 
-# print(len(test_white_data_list), test_white_data_list)
 test_white_data_list = generator_test_Img( white_list_dir=test_white_data_list, resize=(128,128))
-#     print(len(test_white_data_list), test_white_data_list)
 
 fake_A = G.predict(test_white_data_list)
 gen_imgs = fake_A
 # gen_imgs = np.concatenate([fake_A])
 
-# print(gen_imgs[0])
 gen_imgs = 0.5 * gen_imgs + 0.5
 # for plotting
-# print(gen_imgs)
-
 
 
 ids = 0
@@ -259,8 +235,6 @@ for img in gen_imgs:
     ids += 1                  
 plt.close()   
 print("test_data generator predict over.")
-
-
 
 
 def numpy_to_csv(input_image,image_number=10,save_csv_name='predict.csv'):
@@ -280,12 +254,8 @@ def numpy_to_csv(input_image,image_number=10,save_csv_name='predict.csv'):
     df.to_csv(save_csv_name)
     print("Okay! numpy_to_csv")
 
-
-
 n=10
 numpy_to_csv(input_image= gen_imgs,image_number=n,save_csv_name='Predict.csv')
-
-
 
 
 # draw loss 
@@ -304,54 +274,3 @@ plt.plot(all_g_loss_x, all_g_loss_txt, '-r');  # dotted red, g_loss
 # plt.plot(all_d_loss_x , all_d_loss_txt , '-g');  # dotted green, d_loss
 
 plt.show()
-
-
-# fine tune4 loss weight=50 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#############################################
-# plt.gray()
-# n = 2
-# r,c=(3,n)
-# plt.figure(figsize=(c*6,r*6))
-# for i in range(r):
-#     ori_img,white_img = generator_training_Img(real_list_dir=train_real_data_list,
-#                                                 white_list_dir=train_white_data_list,
-#                                                 resize=(img_row,img_col),
-#                                                 batch_size=batch_size)
-#     ax = plt.subplot(r, c, i*c + 1)
-#     a = G.predict(white_img).reshape(img_row,img_col)
-#     plt.imshow(a)
-#     plt.gray()
-#     ax.get_xaxis().set_visible(False)
-#     ax.get_yaxis().set_visible(False)
-#     ax = plt.subplot(r, c, i*c + 2)
-#     a = ori_img.reshape(img_row,img_col)
-#     plt.imshow(a)
-#     plt.gray()
-#     ax.get_xaxis().set_visible(False)
-#     ax.get_yaxis().set_visible(False)
-#     ax = plt.subplot(r, c, i*c + 3)
-#     a = white_img.reshape(img_row,img_col)
-#     plt.imshow(a)
-#     plt.gray()
-#     ax.get_xaxis().set_visible(False)
-#     ax.get_yaxis().set_visible(False)   
-# plt.show()
-
-
