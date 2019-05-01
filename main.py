@@ -134,6 +134,7 @@ AM = Model([img_A,img_B],[valid,fake_A])
 AM.compile(loss=['mse', 'mae'],loss_weights=[1,50],optimizer=AM_optimizer)
 # AM.summary()
 
+
 def generator_training_Img(real_list_dir,white_list_dir,resize=None,batch_size=32):
     batch_real_img=[]
     batch_white_img=[]
@@ -153,7 +154,6 @@ def generator_training_Img(real_list_dir,white_list_dir,resize=None,batch_size=3
     return batch_real_img,batch_white_img
 
 
-
 batch_size = 32 
 all_epoch = 7000
 all_d_loss = np.zeros(all_epoch)
@@ -170,11 +170,12 @@ for now_iter in range(all_epoch):
                                                white_list_dir=train_white_data_list,
                                                resize=(img_row,img_col),
                                                batch_size=batch_size)
-
     imgs_A = ori_img 
     imgs_B = white_img 
     imgs_B = imgs_B.reshape((32,128,128,1))
     imgs_A = imgs_A.reshape((32,128,128,1))
+    
+    
 #     ###################################
 #     #Training Discriminator Phase
 #     ###################################
@@ -196,6 +197,7 @@ for now_iter in range(all_epoch):
     np.savetxt("all_d_loss.txt", all_d_loss, delimiter=",")
     np.savetxt("all_g_loss.txt", all_g_loss, delimiter=",")
 
+    
 def generator_test_Img(white_list_dir,resize=None ):
     batch_real_img=[]
     batch_white_img=[]
@@ -230,7 +232,6 @@ ids = 0
 for img in gen_imgs:
     img = img.reshape((128, 128))
     cv2.imwrite('res_images/cv_saves/'+str(ids)+ ".jpg", img*255)
-    # cv2.waitKey(0)
     plt.imsave("res_images/main_test_res_" + str(ids) + ".jpg", img, cmap="gray")
     ids += 1                  
 plt.close()   
